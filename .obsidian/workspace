@@ -1,0 +1,142 @@
+{
+  "main": {
+    "id": "4a9978a60fc9aaf3",
+    "type": "split",
+    "children": [
+      {
+        "id": "96802dc29a7fd5a4",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "Fundamental Concepts.md",
+            "mode": "source",
+            "backlinks": true,
+            "source": false
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "3ce9a929565a40db",
+    "type": "split",
+    "children": [
+      {
+        "id": "0d80e7b63d736166",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9649f1251a4a6d9f",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "55962b98934bc248",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "tag:#ppidProcess ID and parent process ID",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "horizontal",
+    "width": 211.5
+  },
+  "right": {
+    "id": "3090811a29fe4cef",
+    "type": "split",
+    "children": [
+      {
+        "id": "afd87b668b7a78de",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d9255e971a94703e",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Fundamental Concepts.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "7153e3cec0a6cd8c",
+            "type": "leaf",
+            "state": {
+              "type": "calendar",
+              "state": {}
+            }
+          },
+          {
+            "id": "66ea461b35613606",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Fundamental Concepts.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "0c06b5d96272c592",
+            "type": "leaf",
+            "state": {
+              "type": "juggl_nodes",
+              "state": {}
+            }
+          },
+          {
+            "id": "591e3975e9a82097",
+            "type": "leaf",
+            "state": {
+              "type": "juggl_style",
+              "state": {}
+            }
+          }
+        ],
+        "currentTab": 4
+      }
+    ],
+    "direction": "horizontal",
+    "width": 339.5,
+    "collapsed": true
+  },
+  "active": "96802dc29a7fd5a4",
+  "lastOpenFiles": [
+    "Fundamental Concepts.md",
+    "grep.md",
+    "Process Memory Layout.md",
+    "Contents.md",
+    "program.md",
+    "Kernel.md",
+    "Current working directory.md",
+    "Pathnames.md",
+    "Shell.md",
+    "tree.md"
+  ]
+}
