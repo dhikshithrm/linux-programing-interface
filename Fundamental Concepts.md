@@ -336,3 +336,61 @@ status is set according to the type of signal that caused the death of the proce
 \_exit() or an indication of the signal that killed the process.)
 By convention, a termination status of 0 indicates that the process succeeded,
 and a nonzero status indicates that some error occurred. Most shells make the termination status of the last executed program available via a shell variable named $?.
+
+### **Process user and group identifiers (credentials)**
+Each process has a number of associated user IDs (UIDs) and group IDs (GIDs).
+These include:
+- _Real user ID and real group ID_ : These identify the user and group to which the
+process belongs. A new process inherits these IDs from its parent. A login shell
+gets its real user ID and real group ID from the corresponding fields in the system password file.
+- _Effective user ID and effective group ID_: These two IDs (in conjunction with the
+supplementary group IDs discussed in a moment) are used in determining the
+permissions that the process has when accessing protected resources such as
+files and inter-process communication objects. Typically, the process’s effective
+IDs have the same values as the corresponding real IDs. Changing the effective IDs
+is a mechanism that allows a process to assume the privileges of another user
+or group, as described in a moment.
+- _Supplementary group IDs_: These IDs identify additional groups to which a process belongs. A new process inherits its supplementary group IDs from its parent. A 
+   login shell gets its supplementary group IDs from the system group file.
+
+### **Privileged processes**
+In UNIX systems, a privileged process is one whose effective user ID is 0
+(superuser). Such a process bypasses the permission restrictions normally applied
+by the kernel. By contrast, the term unprivileged (or non-privileged) is applied to processes run by other users. Such processes have a nonzero effective user ID and
+must abide by the permission rules enforced by the kernel.
+A process may be privileged because it was created by another privileged process
+for example, by a login shell started by root (superuser). Another way a process
+may become privileged is via the set-user-ID mechanism, which allows a process to
+assume an effective user ID that is the same as the user ID of the program file that
+it is executing.
+
+## Capabilities
+Since kernel 2.2, Linux divides the privileges traditionally accorded to the super-
+user into a set of distinct units called capabilities. Each privileged operation is 
+associated with a particular capability, and a process can perform an operation only if it
+has the corresponding capability. A traditional superuser process (effective user ID
+of 0) corresponds to a process with all capabilities enabled.
+Granting a subset of capabilities to a process allows it to perform some of the
+operations normally permitted to the superuser, while preventing it from performing others.
+Capabilities are described in detail in Chapter 39. In the remainder of the
+book, when noting that a particular operation can be performed only by a privileged process, we’ll usually identify the specific capability in parentheses. Capability names begin with the prefix CAP_, as in CAP_KILL.
+
+### The init process
+When booting the system, the kernel creates a special process called init, the “parent
+of all processes,” which is derived from the program file /sbin/init. All processes
+on the system are created (using fork()) either by init or by one of its descendants.
+The init process always has the process ID 1 and runs with superuser privileges. The
+init process can’t be killed (not even by the superuser), and it terminates only when
+the system is shut down. The main task of init is to create and monitor a range of
+processes required by a running system. (For details, see the init(8) manual page.)
+
+### Daemon processes
+A daemon is a special-purpose process that is created and handled by the system
+in the same way as other processes, but which is distinguished by the following
+characteristics:
+- It is long-lived. A daemon process is often started at system boot and remains
+in existence until the system is shut down.
+- It runs in the background, and has no controlling terminal from which it can
+read input or to which it can write output.
+Examples of daemon processes include syslogd, which records messages in the system log, and httpd, which serves web pages via the Hypertext Transfer Protocol
+(HTTP).

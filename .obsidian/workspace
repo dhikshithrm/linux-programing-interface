@@ -4,7 +4,7 @@
     "type": "split",
     "children": [
       {
-        "id": "96802dc29a7fd5a4",
+        "id": "af978f3e1a7a9b02",
         "type": "leaf",
         "state": {
           "type": "markdown",
@@ -50,8 +50,7 @@
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -126,17 +125,17 @@
     "width": 339.5,
     "collapsed": true
   },
-  "active": "96802dc29a7fd5a4",
+  "active": "af978f3e1a7a9b02",
   "lastOpenFiles": [
     "Fundamental Concepts.md",
+    "Memory Mappings.md",
+    "page cache.md",
+    "Untitled 1.md",
+    "Contents.md",
     "grep.md",
     "Process Memory Layout.md",
-    "Contents.md",
     "program.md",
     "Kernel.md",
-    "Current working directory.md",
-    "Pathnames.md",
-    "Shell.md",
-    "tree.md"
+    "Current working directory.md"
   ]
 }
