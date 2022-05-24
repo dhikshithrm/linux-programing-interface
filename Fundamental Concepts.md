@@ -1,4 +1,6 @@
-for#shell #kernel #users #groups #sdh #directories #links #files
+#shell #kernel #users #groups #sdh #directories #links #files
+
+
 This chapter introduces a range of concepts related to Linux system programming.
 It is intended for readers who have worked primarily with other operating systems, or 
 who have only limited experience with Linux or another UNIX implementation.
@@ -394,3 +396,173 @@ in existence until the system is shut down.
 read input or to which it can write output.
 Examples of daemon processes include syslogd, which records messages in the system log, and httpd, which serves web pages via the Hypertext Transfer Protocol
 (HTTP).
+
+## 2.8 **[[Memory Mappings]]**
+The mmap() system call creates a new memory mapping in the calling process’s virtual
+address space.
+Mappings fall into two categories:
+- A file mapping maps a region of a file into the calling process’s virtual memory.
+Once mapped, the file’s contents can be accessed by operations on the bytes in
+the corresponding memory region. The pages of the mapping are automatically loaded from the file as required.
+- By contrast, an anonymous mapping doesn’t have a corresponding file. Instead,
+the pages of the mapping are initialized to 0.
+The memory in one process’s mapping may be shared with mappings in other processes. This can occur either because two processes map the same region of a file
+or because a child process created by fork() inherits a mapping from its parent.
+When two or more processes share the same pages, each process may see the
+changes made by other processes to the contents of the pages, depending on
+whether the mapping is created as private or shared. When a mapping is private,
+modifications to the contents of the mapping are not visible to other processes and
+are not carried through to the underlying file. When a mapping is shared, modifications to the contents of the mapping are visible to other processes sharing the same
+mapping and are carried through to the underlying file.
+Memory mappings serve a variety of purposes, including initialization of a
+process’s text segment from the corresponding segment of an executable file,
+allocation of new (zero-filled) memory, file I/O (memory-mapped I/O), and inter-
+process communication (via a shared mapping).
+
+## **2.9 Static and Shared Libraries**
+An _object library_ is a file containing the compiled object code for a (usually logically related) set of functions that may be called from application programs. Placing code for a set of functions in a single object library eases the tasks of program creation and maintenance. Modern [[UNIX]] systems provide two type of object libraries:
+_static libraries_ and _shared libraries_.
+### **Static libraries**
+Static libraries is essentially a structured bundle of compiled object modules. To use functions from a static library, we specify that library in the link command used to build a program. After resolving the various function references from the main program to the modules in the static library, the linker extracts copies of the required object modules from the library and copies these into the resulting executable file. We say that such a program is _statically linked_.
+The fact that each statically linked program includes its own copy of the object modules required from the library creates a number of disadvantages. One is that the duplication of object code in different executable files wastes disk space. A corresponding waste of memory occurs when statically linked programs using the same library function are executed at the same time; each program requires its own copy of function to reside in memory. Additionally, if a library function requires modification, then , after recompiling that function and adding it to the static library, all applications that need to use the updated function must be re-linked against the recompiled library. but this makes applications run faster when calling those functions that are in statically linked libraries since they are in the same program memory itself.
+
+### **Shared libraries**
+Shared libraries were designed to address the problems with static libraries. If a program is linked against a shared library, then, instead of copying object modules from the library into the executable, the linker just writes a record into the executable to indicate that at run time the executable needs to use that shared library. When the executable is loaded into memory at run time, a program called the _dynamic linker_ ensures that the shared libraries required by the executable are found and loaded into memory, and performs run-time linking to resolve the function calls in the executable to the corresponding definitions in the shared libraries. At run time, only a single copy of the shared library needs to be resident in memory; all running programs can use that copy.
+The fact that a shared library contains the sole compiled version of a function saves disk space. It also greatly eases the job of ensuring that programs employ the newest version of a function. Simply rebuilding the shared library with the new function definition causes existing programs to automatically use the new definitions when they are next executed.
+
+## **2.10 Interprocess Communication and Synchronization**
+A running [[Linux]] system consists of numerous processes, many of which operate independently of each other. Some processes, however, cooperate to achieve their intended purposes, and these processes need methods of communicating with one another and synchronizing their actions.
+One way for processes to communicate is by reading and writing information in disk files. However, for many applications, this is too slow and inflexible.
+Therefore, [[Linux]], like all modern [[UNIX]] implementations, provides a rich set of mechanisms for interprocess communication (IPC), including the following:
+
+- _signals_, which are used to indicate that an event has occurred;
+- _pipes_ and _FIFOs_, which can be used to transfer data between processes;
+- _sockets_, which can be used to transfer data from one process to another, either one the same host computer or on different hosts connected by a network;
+-  _file locking_, which allows a process to lock regions of a file in order to prevent other processes from reading or updating the file contents;
+- _message queues_, which are used to exchange messages (packets of data) between processes;
+- _semaphores_, which are used to synchronize the actions of processes; and 
+- _shared memory_, which allows two or more processes to share a piece of memory.
+When one process changes the contents of the shared memory, all of the other processes can immediately see the changes.
+
+The wide variety of IPC mechanisms on [[UNIX]] systems, with sometimes overlapping functionality, is in part due to their evolution under different variants of the [[UNIX]] system and the requirements of various standards. For example, [[FIFO]]s and [[UNIX]] domain sockets essentially perform the same function of allowing unrelated processes on the same system to exchange data. Both exist in modern [[UNIX]] systems because [[FIFO]]s came from [[System V]], while sockets came from [[BSD]].
+
+## **2.11 Signals**
+Although we listed them as a method of IPC in the previous section, signals are more usually employed in a wide range of other contexts, and so deserve a longer discussion.
+Signals are often described as "software interrupts." The arrival of a signal informs a process that some event or exceptional condition has occurred. There are various types of signals, each of which identifies a different event or condition.
+Each signal type is identified by a different integer, defined with symbolic names of the form SIGxxxx.
+Signals are sent to a process by the kernel, by another process ( with suitable permission), or by the process itself. For example, the kernel may send a signal to a process when one of the following occurs:
+- the user typed the interrupt character (usually Ctrl-C) on the keyboard;
+- one of the process's children has terminated;
+- a timer (alarm clock) set by the process has expired; or
+- the process attempted to access an invalid memory address.
+Within the shell, the _kill_ command can be used to send a signal to a process. The _kill()_ system call provides the same facility within programs.
+
+When a process receives a signal, it takes one of following actions, depending on the signal:
+- it ignores the signal;
+- it is killed by the signal; or
+- it is suspended until later being resumed by receipt of a special-purpose signal
+For most signal types, instead of accepting the default signal action, a program can choose to ignore the signal (useful if the default action for the signal is something other than being ignored), or to establish a _signal handler_. A signal handler is a programmer-defined function that is automatically invoked when the signal is delivered to the process. This function performs some action appropriate to the condition that generated the signal.
+In the interval between the time it is generated and the time it is delivered, a signal is said to be _pending_ for a process. Normally, a pending signal is delivered as soon as the receiving process is next scheduled to run, or immediately if the process is already running. However, it is also possible to block a signal by adding it to
+the process’s signal mask. If a signal is generated while it is blocked, it remains
+pending until it is later unblocked (i.e., removed from the signal mask).
+
+## **2.12 [[Threads]]**
+In modern [[UNIX]] implementations, each process can have multiple threads of execution. One way of envisaging threads is as a set of processes that share the same
+virtual memory, as well as a range of other attributes. Each thread is executing the
+same program code and shares the same data area and heap. However, each thread
+has it own stack containing local variables and function call linkage information.
+Threads can communicate with each other via the global variables that they
+share. The threading API provides condition variables and mutexes, which are primitives that enable the threads of a process to communicate and synchronize their
+actions, in particular, their use of shared variables. Threads can also communicate
+with one another using the IPC and synchronization mechanisms described in
+Section 2.10.
+The primary advantages of using threads are that they make it easy to share
+data (via global variables) between cooperating threads and that some algorithms
+transpose more naturally to a multithreaded implementation than to a multiprocess
+implementation. Furthermore, a multithreaded application can transparently take
+advantage of the possibilities for parallel processing on multiprocessor hardware.
+
+## **2.13 Process Groups and Shell Job Control**
+Each program executed by the shell is started in a new process. For example, the
+shell creates three processes to execute the following pipeline of commands (which
+displays a list of files in the current working directory sorted by file size):
+```
+	$ ls -l | sort -k5n | less
+```
+All major shells, except the Bourne shell, provide an interactive feature called job
+control, which allows the user to simultaneously execute and manipulate multiple
+commands or pipelines. In job-control shells, all of the processes in a pipeline are
+placed in a new process group or job. (In the simple case of a shell command line containing a single command, a new process group containing just a single process is
+created.) Each process in a process group has the same integer process group
+identifier, which is the same as the process ID of one of the processes in the group,
+termed the process group leader.
+The kernel allows for various actions, notably the delivery of signals, to be per-
+formed on all members of a process group. Job-control shells use this feature to
+allow the user to suspend or resume all of the processes in a pipeline, as described
+in the next section.
+
+## **2.14 Sessions, Controlling Terminals, and Controlling Processes**
+A session is a collection of process groups ( jobs). All of the processes in a session
+have the same session identifier. A session leader is the process that created the session, and its process ID becomes the session ID.
+Sessions are used mainly by job-control shells. All of the process groups created by a job-control shell belong to the same session as the shell, which is the session leader.
+Sessions usually have an associated controlling terminal. The controlling terminal is established when the session leader process first opens a terminal device. For
+a session created by an interactive shell, this is the terminal at which the user
+logged in. A terminal may be the controlling terminal of at most one session.
+As a consequence of opening the controlling terminal, the session leader
+becomes the controlling process for the terminal. The controlling process receives a
+SIGHUP signal if a terminal disconnect occurs (e.g., if the terminal window is closed).
+At any point in time, one process group in a session is the foreground process
+group ( foreground job), which may read input from the terminal and send output to
+it. If the user types the interrupt character (usually Control-C) or the suspend character
+(usually Control-Z) on the controlling terminal, then the terminal driver sends a signal
+that kills or suspends (i.e., stops) the foreground process group. A session can have
+any number of background process groups (background jobs), which are created by terminating a command with the ampersand (&) character.
+Job-control shells provide commands for listing all jobs, sending signals to jobs,
+and moving jobs between the foreground and background.
+
+
+## **2.15 Pseudoterminals**
+A pseudoterminal is a pair of connected virtual devices, known as the master and
+slave. This device pair provides an IPC channel allowing data to be transferred in
+both directions between the two devices.
+The key point about a pseudoterminal is that the slave device provides an interface
+that behaves like a terminal, which makes it possible to connect a terminal-oriented
+program to the slave device and then use another program connected to the master device to drive the terminal-oriented program. Output written by the driver
+program undergoes the usual input processing performed by the terminal driver
+(for example, in the default mode, a carriage return is mapped to a newline) and is
+then passed as input to the terminal-oriented program connected to the slave. Any-
+thing that the terminal-oriented program writes to the slave is passed (after per-
+forming all of the usual terminal output processing) as input to the driver program.
+In other words, the driver program is performing the function normally performed
+by the user at a conventional terminal.
+Pseudoterminals are used in a variety of applications, most notably in the
+implementation of terminal windows provided under an X Window System login
+and in applications providing network login services, such as telnet and ssh.
+
+## **2.16 Date and Time**
+Two types of time are of interest to a process:
+- _Real time_ is measured either from some standard point (calendar time) or from
+some fixed point, typically the start, in the life of a process (elapsed or wall clock
+time). On UNIX systems, calendar time is measured in seconds since midnight
+on the morning of January 1, 1970, Universal Coordinated Time (usually
+abbreviated UTC), and coordinated on the base point for time-zones defined
+by the longitudinal line passing through Greenwich, England. This date, which
+is close to the birth of the UNIX system, is referred to as the Epoch
+- Process time, also called CPU time, is the total amount of CPU time that a process has used since starting. CPU time is further divided into system CPU time, the time spent executing code in the _kernel mode_ (i.e., executing system calls and performing other kernel services on behalf of the process), and user CPU time, the time spent executing code in _user mode_ 
+
+The _time_ command displays the real time, the system CPU time, and user CPU time taken to execute the processes in a pipeline.
+
+## **2.17 Client-Server Architecture**
+At various points in this book, we discuss the design and implementation of client-
+server applications.
+A client-server application is one that is broken into two component processes:
+
+- a _client_, which asks the server to carry out some _service_ by sending it a request message; and
+- a _server_, which examines the client's request, performs appropriate actions, and then sends a response message back to the client.
+
+Sometimes, the client and server may engage in an extended dialogue of requests
+and responses.
+Typically, the client application interacts with a user, while the server application provides access to some shared resource. Commonly, there are multiple
+instances of client processes communicating with one or a few instances of the
+server process
+

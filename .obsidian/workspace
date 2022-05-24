@@ -4,12 +4,12 @@
     "type": "split",
     "children": [
       {
-        "id": "af978f3e1a7a9b02",
+        "id": "f36ae720f13d3a03",
         "type": "leaf",
         "state": {
           "type": "markdown",
           "state": {
-            "file": "Fundamental Concepts.md",
+            "file": "System programming concepts.md",
             "mode": "source",
             "backlinks": true,
             "source": false
@@ -41,7 +41,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "tag:#ppidProcess ID and parent process ID",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -49,12 +49,21 @@
                 "sortOrder": "alphabetical"
               }
             }
+          },
+          {
+            "id": "c48c07af0d7ba2f9",
+            "type": "leaf",
+            "state": {
+              "type": "starred",
+              "state": {}
+            }
           }
         ]
       }
     ],
     "direction": "horizontal",
-    "width": 211.5
+    "width": 268.5036334991455,
+    "collapsed": true
   },
   "right": {
     "id": "3090811a29fe4cef",
@@ -70,7 +79,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Fundamental Concepts.md",
+                "file": "System programming concepts.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -95,7 +104,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Fundamental Concepts.md",
+                "file": "System programming concepts.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -116,6 +125,17 @@
               "type": "juggl_style",
               "state": {}
             }
+          },
+          {
+            "id": "543ca89002543ab0",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
           }
         ],
         "currentTab": 4
@@ -125,17 +145,17 @@
     "width": 339.5,
     "collapsed": true
   },
-  "active": "af978f3e1a7a9b02",
+  "active": "f36ae720f13d3a03",
   "lastOpenFiles": [
+    "System programming concepts.md",
     "Fundamental Concepts.md",
+    "Contents.md",
+    "UNIX.md",
+    "2.10.md",
     "Memory Mappings.md",
     "page cache.md",
     "Untitled 1.md",
-    "Contents.md",
     "grep.md",
-    "Process Memory Layout.md",
-    "program.md",
-    "Kernel.md",
-    "Current working directory.md"
+    "Process Memory Layout.md"
   ]
 }
