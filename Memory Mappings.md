@@ -1,0 +1,5 @@
+A memory-mapped file is a segment of virtual memory of a process that has been assigned a direct byte-for-byte correlation with some portion of a file or file-like resource.
+## Benefits
+The benefit of memory mapping a file is increasing I/O performance, especially when used on large files. For small files, memory-mapped files can result in a waste of [[slack space]]
+as memory maps are always aligned to the page size, which is mostly 4 KiB. Therefore, a 5KiB file will allocate 8KiB and thus 3KiB are wasted. Accessing memory mapped files is faster than using direct read and write operations for two reasons. Firstly, a system call is orders of magnitude slower than a simple change to a program's local memory. Secondly, in most operating systems the memory region mapped actually is the [[kernel]]'s [[page cache]]
+(file cache), meaning that no copies need to be created in user space.
